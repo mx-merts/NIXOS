@@ -38,6 +38,7 @@
   ];
 
   programs.fish.enable = true;
+  users.users.m.shell = pkgs.fish;
 
   environment.systemPackages = with pkgs; [
     wezterm fish starship fzf zoxide bat eza ripgrep fd jq fastfetch
