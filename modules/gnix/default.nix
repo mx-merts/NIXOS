@@ -1,6 +1,8 @@
 { config, pkgs, ... }:
 
 {
+  imports = [ ../hardware ];
+
   nixpkgs.config.packageOverrides = super: {
     openldap = super.openldap.overrideAttrs (oldAttrs: {
       doCheck = false;
@@ -9,7 +11,7 @@
 
   programs.steam = {
     enable = true;
-    remotePlay.openFirewall = true;
+    remotePlay.openFirewall   = true;
     dedicatedServer.openFirewall = true;
   };
 
