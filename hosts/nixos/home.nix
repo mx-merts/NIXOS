@@ -127,7 +127,7 @@
         { key = '0', mods = 'CTRL', action = act.ResetFontSize },
 
         -- Arama
-        { key = 'f', mods = 'CTRL|SHIFT', action = act.Search { CaseInSensitiveString = '' } },
+        { key = 'f', mods = 'CTRL|SHIFT', action = act.Search('CurrentSelectionOrEmptyString') },
 
         -- Copy mode (klavye ile seçim)
         { key = 'x', mods = 'CTRL|SHIFT', action = act.ActivateCopyMode },
