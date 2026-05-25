@@ -39,7 +39,13 @@
 
   programs.fish.enable = true;
   users.users.m.shell = pkgs.fish;
+# ---------------------------------------------------------------- #
+  # FLATPAK + FLATHUB                                                 #
+  # ---------------------------------------------------------------- #
+  services.flatpak.enable = true;
+  xdg.portal.enable = true;
 
+  
   environment.systemPackages = with pkgs; [
     wezterm fish starship fzf zoxide bat eza ripgrep fd jq fastfetch
     micro vim
