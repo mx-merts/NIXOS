@@ -42,7 +42,7 @@
     lutris
     heroic
     bottles
-    wineWowPackages.stagingFull
+    wineWow64Packages.stagingFull
     winetricks
     cabextract
     dxvk
