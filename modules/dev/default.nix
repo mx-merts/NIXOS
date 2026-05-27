@@ -4,159 +4,116 @@
   imports = [ ../gnix ];
 
   # ================================================================ #
-  #        CODEX — PARANOİD GÜVENLİK KATMANI                        #
+  # KERNEL PARAMETRELERİ                                             #
   # ================================================================ #
-
-  # ---------------------------------------------------------------- #
-  # 1. HARDENED KERNEL                                               #
-  # ---------------------------------------------------------------- #
-  boot.kernelPackages = pkgs.linuxPackages_hardened;
-
-  # ---------------------------------------------------------------- #
-  # 2. KERNEL PARAMETRELERİ                                          #
-  # ---------------------------------------------------------------- #
   boot.kernelParams = [
-    "slab_nomerge"          # heap spray saldırılarını zorlaştırır
-    "slub_debug=FZP"        # bellek hataları tespiti
-    "page_poison=1"         # serbest bırakılan sayfaları zehirle
-    "page_alloc.shuffle=1"  # bellek tahsis sırasını karıştır
-    "pti=on"                # Meltdown koruması (PTI)
-    "vsyscall=none"         # eski vsyscall arayüzünü kapat
-    "debugfs=off"           # debugfs kapat
-    "oops=panic"            # kernel oops → panik (exploit önleme)
-    "module.sig_enforce=1"  # imzasız kernel modülü yükleme
-    "lockdown=confidentiality" # kernel lockdown modu
+    "slab_nomerge"             # heap spray saldırılarını zorlaştırır
+    "slub_debug=FZP"           # bellek hata tespiti
+    "page_poison=1"            # serbest sayfaları zehirle
+    "page_alloc.shuffle=1"     # bellek tahsis sırasını karıştır
+    "pti=on"                   # Meltdown koruması
+    "vsyscall=none"            # eski vsyscall kapat
+    "debugfs=off"              # debugfs kapat
+    "oops=panic"               # kernel oops panige çevir
+    "lockdown=confidentiality" # kernel lockdown
   ];
 
-  # ---------------------------------------------------------------- #
-  # 3. SYSCTL GÜVENLİK AYARLARI                                     #
-  # ---------------------------------------------------------------- #
+  # ================================================================ #
+  # SYSCTL GÜVENLİK AYARLARI                                         #
+  # ================================================================ #
   boot.kernel.sysctl = {
-    # Bellek koruması
-    "kernel.randomize_va_space"   = 2;    # tam ASLR
-    "kernel.kptr_restrict"        = 2;    # kernel pointer gizle
-    "kernel.dmesg_restrict"       = 1;    # dmesg sadece root
+    "kernel.randomize_va_space"        = 2;
+    "kernel.kptr_restrict"             = 2;
+    "kernel.dmesg_restrict"            = 1;
     "kernel.unprivileged_bpf_disabled" = 1;
-    "kernel.perf_event_paranoid"  = 3;    # perf eventi kısıtla
-    "kernel.yama.ptrace_scope"    = 2;    # ptrace sadece root
-    "kernel.kexec_load_disabled"  = 1;    # kexec kapat
-
-    # Core dump kapat
-    "kernel.core_pattern"         = "|/bin/false";
-    "fs.suid_dumpable"            = 0;
-
-    # Ağ güvenliği
-    "net.ipv4.conf.all.rp_filter"          = 1;  # spoofing koruması
-    "net.ipv4.conf.default.rp_filter"      = 1;
-    "net.ipv4.conf.all.accept_redirects"   = 0;  # ICMP redirect reddet
+    "kernel.perf_event_paranoid"       = 3;
+    "kernel.yama.ptrace_scope"         = 2;
+    "kernel.kexec_load_disabled"       = 1;
+    "kernel.core_pattern"              = "|/bin/false";
+    "fs.suid_dumpable"                 = 0;
+    "fs.protected_hardlinks"           = 1;
+    "fs.protected_symlinks"            = 1;
+    "fs.protected_fifos"               = 2;
+    "fs.protected_regular"             = 2;
+    "net.ipv4.conf.all.rp_filter"            = 1;
+    "net.ipv4.conf.default.rp_filter"        = 1;
+    "net.ipv4.conf.all.accept_redirects"     = 0;
     "net.ipv4.conf.default.accept_redirects" = 0;
-    "net.ipv4.conf.all.send_redirects"     = 0;
-    "net.ipv4.conf.all.accept_source_route" = 0;
-    "net.ipv4.tcp_syncookies"              = 1;  # SYN flood koruması
-    "net.ipv4.tcp_timestamps"              = 0;  # uptime sızdırma
-    "net.ipv6.conf.all.accept_redirects"   = 0;
+    "net.ipv4.conf.all.send_redirects"       = 0;
+    "net.ipv4.conf.all.accept_source_route"  = 0;
+    "net.ipv4.tcp_syncookies"                = 1;
+    "net.ipv4.tcp_timestamps"                = 0;
+    "net.ipv6.conf.all.accept_redirects"     = 0;
     "net.ipv6.conf.default.accept_redirects" = 0;
-    "net.ipv6.conf.all.accept_source_route" = 0;
-
-    # Dosya sistemi
-    "fs.protected_hardlinks"  = 1;
-    "fs.protected_symlinks"   = 1;
-    "fs.protected_fifos"      = 2;
-    "fs.protected_regular"    = 2;
+    "net.ipv6.conf.all.accept_source_route"  = 0;
   };
 
-  # ---------------------------------------------------------------- #
-  # 4. /tmp TMPFS (RAM'de, reboot'ta siliniyor)                      #
-  # ---------------------------------------------------------------- #
-  boot.tmp.useTmpfs   = true;
-  boot.tmp.tmpfsSize  = "4G";
+  # ================================================================ #
+  # /tmp TMPFS                                                        #
+  # ================================================================ #
+  boot.tmp.useTmpfs    = true;
+  boot.tmp.tmpfsSize   = "4G";
   boot.tmp.cleanOnBoot = true;
 
-  # ---------------------------------------------------------------- #
-  # 5. SWAP KAPAT                                                    #
-  # ---------------------------------------------------------------- #
-  swapDevices = lib.mkForce [];
+  # ================================================================ #
+  # SWAP KAPAT                                                        #
+  # ================================================================ #
+  swapDevices     = lib.mkForce [];
   zramSwap.enable = false;
 
-  # ---------------------------------------------------------------- #
-  # 6. MAC ADRESİ RASTGELELEŞTİRME                                   #
-  # ---------------------------------------------------------------- #
-  networking.networkmanager.wifi.macAddress    = "random";
+  # ================================================================ #
+  # MAC ADRESİ RASTGELELEŞTİRME                                      #
+  # ================================================================ #
+  networking.networkmanager.wifi.macAddress     = "random";
   networking.networkmanager.ethernet.macAddress = "random";
 
-  # ---------------------------------------------------------------- #
-  # 7. DNS over TLS (Cloudflare + Quad9)                             #
-  # ---------------------------------------------------------------- #
+  # ================================================================ #
+  # DNS over TLS                                                      #
+  # ================================================================ #
   networking.nameservers = [ "1.1.1.1" "9.9.9.9" ];
   services.resolved = {
-    enable    = true;
-    dnssec    = "true";
-    dnsovertls = "opportunistic";
+    enable      = true;
+    dnssec      = "true";
+    dnsovertls  = "opportunistic";
     extraConfig = ''
       DNS=1.1.1.1#cloudflare-dns.com 9.9.9.9#dns.quad9.net
       FallbackDNS=1.0.0.1#cloudflare-dns.com 149.112.112.112#dns.quad9.net
     '';
   };
 
-  # ---------------------------------------------------------------- #
-  # 8. SIKILAŞTIRILMIŞ APPARMOR                                      #
-  # ---------------------------------------------------------------- #
+  # ================================================================ #
+  # APPARMOR                                                          #
+  # ================================================================ #
   security.apparmor = {
-    enable                   = true;
+    enable                    = true;
     killUnconfinedConfinables = true;
-    packages                 = with pkgs; [ apparmor-profiles ];
+    packages                  = with pkgs; [ apparmor-profiles ];
   };
 
-  # ---------------------------------------------------------------- #
-  # 9. AUDIT LOGLAMA                                                 #
-  # ---------------------------------------------------------------- #
+  # ================================================================ #
+  # AUDIT LOGLAMA                                                     #
+  # ================================================================ #
   security.audit.enable = true;
-  security.audit.rules  = [
-    "-a exit,always -F arch=b64 -S execve"         # komut çalıştırma
-    "-w /etc/passwd -p wa"                          # kullanıcı değişikliği
-    "-w /etc/shadow -p wa"                          # şifre değişikliği
-    "-w /etc/sudoers -p wa"                         # sudo değişikliği
-    "-w /root -p wa"                                # root dizini
+  security.audit.rules = [
+    "-a exit,always -F arch=b64 -S execve"
+    "-w /etc/passwd  -p wa"
+    "-w /etc/shadow  -p wa"
+    "-w /etc/sudoers -p wa"
+    "-w /root        -p wa"
   ];
   security.auditd.enable = true;
 
-  # ---------------------------------------------------------------- #
-  # 11. SİBER GÜVENLİK ARAÇLARI                                      #
-  # ---------------------------------------------------------------- #
+  # ================================================================ #
+  # SİBER GÜVENLİK ARAÇLARI                                          #
+  # ================================================================ #
   environment.systemPackages = with pkgs; [
-    # ── Ağ & Trafik ────────────────────────────────────────────── #
-    nmap
-    wireshark
-    bettercap
-    tcpdump
-    mitmproxy
-
-    # ── Exploitation ───────────────────────────────────────────── #
-    metasploit
-    sqlmap
-
-    # ── Şifre Kırma ────────────────────────────────────────────── #
+    nmap wireshark bettercap tcpdump mitmproxy
+    metasploit sqlmap
     hashcat
-
-    # ── Web ────────────────────────────────────────────────────── #
-    gobuster
-    ffuf
-    nikto
-
-    # ── Kablosuz ───────────────────────────────────────────────── #
+    gobuster ffuf nikto
     aircrack-ng
-
-    # ── Tersine Mühendislik ────────────────────────────────────── #
-    ghidra
-    radare2
-
-    # ── Recon ──────────────────────────────────────────────────── #
-    theharvester
-    subfinder
-
-    # ── Audit & İzleme ─────────────────────────────────────────── #
-    audit
-    lynis        # sistem güvenlik denetimi
-    rkhunter     # rootkit tarayıcı
+    ghidra radare2
+    theharvester subfinder
+    audit lynis rkhunter
   ];
 }
