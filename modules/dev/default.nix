@@ -115,6 +115,6 @@
     aircrack-ng
     ghidra radare2
     theharvester subfinder
-    audit lynis chkrootkit
+    audit lynis
   ];
 }
