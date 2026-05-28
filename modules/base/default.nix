@@ -56,6 +56,7 @@
     onlyoffice-desktopeditors
     vlc discord spotify
     obs-studio flameshot
+    qbittorrent
     vscode
     nix-output-monitor
     firefox
