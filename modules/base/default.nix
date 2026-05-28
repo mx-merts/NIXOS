@@ -57,6 +57,7 @@
     vlc discord spotify
     obs-studio flameshot
     vscode
+    nix-output-monitor
     firefox
   ];
 }
