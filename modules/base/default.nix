@@ -38,7 +38,7 @@
   ];
 
   programs.fish.enable = true;
-  users.users.m.shell = pkgs.fish;
+  users.users.m_merts.shell = pkgs.fish;
 # ---------------------------------------------------------------- #
   # FLATPAK + FLATHUB                                                 #
   # ---------------------------------------------------------------- #
