@@ -29,9 +29,9 @@
 
   system.nixos.label = "NIXOS";
 
-  users.users.m = {
+  users.users.m_merts = {
     isNormalUser = true;
-    description = "m";
+    description = "m_merts";
     extraGroups = [ "networkmanager" "wheel" "video" "audio" ];
   };
 

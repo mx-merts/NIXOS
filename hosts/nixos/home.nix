@@ -1,8 +1,8 @@
 { config, pkgs, ... }:
 
 {
-  home.username      = "m";
-  home.homeDirectory = "/home/m";
+  home.username      = "m_merts";
+  home.homeDirectory = "/home/m_merts";
 
   programs.wezterm = {
     enable      = true;

@@ -8,18 +8,18 @@
     [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "uas" "sd_mod" ];
+  boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "uas" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/09f44a80-662c-4cc9-8ec9-28d2f56a1eca";
+    { device = "/dev/disk/by-uuid/167c916f-26d1-441b-ba94-e15aa79e265e";
       fsType = "ext4";
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/97A3-6161";
+    { device = "/dev/disk/by-uuid/976A-8F63";
       fsType = "vfat";
       options = [ "fmask=0077" "dmask=0077" ];
     };

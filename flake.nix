@@ -20,7 +20,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.m = import ./hosts/nixos/home.nix;
+            home-manager.users.m_merts = import ./hosts/nixos/home.nix;
           }
         ];
       };
