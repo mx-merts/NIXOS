@@ -2,7 +2,7 @@
 
 {
   # ================================================================ #
-  #  WEBDEV MODÜLÜ — MariaDB · Apache · PHP · phpMyAdmin · .NET      #
+  #  WEBDEV MODÜLÜ — MariaDB · Apache · PHP · Adminer · .NET         #
   # ================================================================ #
 
   # ---------------------------------------------------------------- #
@@ -14,7 +14,7 @@
   };
 
   # ---------------------------------------------------------------- #
-  # 2. APACHE + PHP + PHPMYADMİN                                     #
+  # 2. APACHE + PHP + ADMİNER                                        #
   # ---------------------------------------------------------------- #
   services.httpd = {
     enable     = true;
@@ -30,11 +30,10 @@
           Require all granted
         </Directory>
 
-        Alias /phpmyadmin ${pkgs.phpmyadmin}/share/phpmyadmin
-        <Directory "${pkgs.phpmyadmin}/share/phpmyadmin">
-          AllowOverride All
+        Alias /adminer ${pkgs.adminer}/adminer.php
+        <Files "${pkgs.adminer}/adminer.php">
           Require all granted
-        </Directory>
+        </Files>
       '';
     };
   };
@@ -52,6 +51,6 @@
   environment.systemPackages = with pkgs; [
     dotnet-sdk_8
     mariadb
-    phpmyadmin
+    adminer
   ];
 }
