@@ -16,29 +16,31 @@
   # ---------------------------------------------------------------- #
   # 2. APACHE + PHP                                                   #
   # ---------------------------------------------------------------- #
-  services.httpd = {
-    enable     = true;
-    enablePHP  = true;
-    phpPackage = pkgs.php83;
-    adminAddr  = "admin@localhost";
-
-    virtualHosts."localhost" = {
-      documentRoot = "/srv/http";
-      extraConfig  = ''
-        <Directory "/srv/http">
-          AllowOverride All
-          Require all granted
-        </Directory>
-      '';
+ services.httpd = {
+      enable     = true;
+      enablePHP  = true;
+      phpPackage = pkgs.php83;
+      adminAddr  = "admin@localhost";
+  
+      virtualHosts."localhost" = {
+        documentRoot = "/srv/http";
+        extraConfig  = ''
+          <Directory "/srv/http">
+            AllowOverride All
+            Require all granted
+          </Directory>
+  
+          Alias /phpmyadmin ${pkgs.phpmyadmin}/share/phpmyadmin
+          <Directory "${pkgs.phpmyadmin}/share/phpmyadmin">
+            AllowOverride All
+            Require all granted
+          </Directory>
+        '';
+      };
+      };
     };
-  };
 
-  # ---------------------------------------------------------------- #
-  # 3. PHPMYADMİN                                                     #
-  # ---------------------------------------------------------------- #
-  services.phpMyAdmin = {
-    enable = true;
-  };
+
 
   # ---------------------------------------------------------------- #
   # 4. /srv/http klasörü — m_merts yazsın diye                       #
@@ -50,8 +52,8 @@
   # ---------------------------------------------------------------- #
   # 5. .NET SDK                                                       #
   # ---------------------------------------------------------------- #
-  environment.systemPackages = with pkgs; [
+ environment.systemPackages = with pkgs; [
     dotnet-sdk_8
     mariadb
+    phpmyadmin
   ];
-}
